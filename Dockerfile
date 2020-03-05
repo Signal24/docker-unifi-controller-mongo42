@@ -13,8 +13,8 @@ ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN \
  echo "**** add mongo repository ****" && \
- apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6 && \
- echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" >> /etc/apt/sources.list.d/mongo.list && \
+ curl https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - && \
+ echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" >> /etc/apt/sources.list.d/mongo.list && \
  echo "**** install packages ****" && \
  apt-get update && \
  apt-get install -y \
@@ -33,7 +33,7 @@ RUN \
  curl -o \
  /tmp/unifi.deb -L \
 	"https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb" && \
- dpkg -i /tmp/unifi.deb && \
+ dpkg -i --ignore-depends=mongodb-server,mongodb-10gen,mongodb-org-server /tmp/unifi.deb && \
  echo "**** cleanup ****" && \
  apt-get clean && \
  rm -rf \
